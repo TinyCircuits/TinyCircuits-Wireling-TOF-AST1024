@@ -1,11 +1,14 @@
 /*************************************************************************
- * This example shows how to use continuous mode to take
- * range measurements with the VL53L0X. It is based on
+ * Time of Flight Distance Sensor Wireling 
+ * This example shows how to use continuous mode to take, and print
+ * range measurements with the VL53L0X Wireling. It is based on
  * vl53l0x_ContinuousRanging_Example.c from the VL53L0X API.
  *
  * The range readings are in units of mm.
  * 
- * Modified by: Laverena Wienclaw for Tiny Circuits 
+ * Hardware by: TinyCircuits
+ * Modified by: Laverena Wienclaw for TinyCircuits 
+ * Last Modified: 10/22/19
  *************************************************************************/
 
 #include <Wire.h>       // For I2C communication
@@ -17,15 +20,21 @@ TinyScreen display = TinyScreen(TinyScreenPlus);
 const int background = TS_8b_Black;
 
 VL53L0X distanceSensor; // Name of sensor 
-const int tofPort = 0;  // Port # of sensor (Found on Whisker Adapter Board)
+const int tofPort = 0;  // Port # of sensor (Found on Wireling Adapter Board)
 
 const int averageCount = 1;
 int average[averageCount];
 int averagePos = 0;
 
+#if defined(ARDUINO_ARCH_AVR)
+#define SerialMonitorInterface Serial
+#elif defined(ARDUINO_ARCH_SAMD)
+#define SerialMonitorInterface SerialUSB
+#endif
+
 void setup() {
   delay(200);              // Sensor Startup time
-  SerialUSB.begin(115200); // Set Baud Rate
+  SerialMonitorInterface.begin(115200); // Set Baud Rate
   Wire.begin();            // Begin I2C communication
 
   // TinyScreen appearance variables are set
@@ -36,7 +45,7 @@ void setup() {
   display.fontColor(TS_8b_White, background);
 
   // Select the port of the distance sensor (this number corresponds 
-  // with port #'s on the Whisker adapter board)
+  // with port #'s on the Wireling adapter board)
   selectPort(tofPort);
 
   // Initialize the distance sensor and set a timeout
@@ -63,9 +72,10 @@ void loop() {
   averageRead /= (unsigned long)averageCount;
 
   // Print the average position to the TinyScreen and the Serial Monitor
-  SerialUSB.print(averageRead);
-  SerialUSB.println("mm");
   printToScreen(averageRead);
+  SerialMonitorInterface.print(averageRead);
+  SerialMonitorInterface.println("mm");
+  
 }
 
 // Print averageRead to the TinyScreen
@@ -85,7 +95,7 @@ void printToScreen(unsigned long averageRead){
   }
 }
 
-// **This function is necessary for all Whisker boards attached through an Adapter board**
+// **This function is necessary for all Wireling boards attached through an Adapter board**
 // Selects the correct address of the port being used in the Adapter board
 void selectPort(int port) {
   Wire.beginTransmission(0x70);

@@ -171,6 +171,3 @@ class VL53L0X
 };
 
 #endif
-
-
-
