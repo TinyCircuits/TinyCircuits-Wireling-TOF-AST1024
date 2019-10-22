@@ -1,7 +1,7 @@
-# TinyCircuits Whisker TOF
+# TinyCircuits Wireling TOF
 # AST1024 Rev2
 
-The design files are located under design_files/ for the TinyCircuits AST1024 Rev 2 PCB. This is a whisker board which features the ST VL53L0X IR Time-of-Flight sensor capable of measuring absolute range up to 2m and is most responsive to reflective materials.
+The design files are located under design_files/ for the TinyCircuits AST1024 Rev 2 PCB. This is a Wireling board which features the ST VL53L0X IR Time-of-Flight sensor capable of measuring absolute range up to 2m and is most responsive to reflective materials.
 
 Format is in Cadsoft Eagle format - Eagle version 6.2 was used for the original design.
 
