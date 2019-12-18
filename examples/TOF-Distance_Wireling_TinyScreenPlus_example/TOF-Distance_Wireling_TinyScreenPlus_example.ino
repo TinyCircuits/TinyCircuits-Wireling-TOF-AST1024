@@ -1,5 +1,5 @@
 /*************************************************************************
- * Time of Flight Distance Sensor Wireling Example
+ * Time of Flight Distance Sensor Wireling 
  * This example shows how to use continuous mode to take, and print
  * range measurements with the VL53L0X Wireling. It is based on
  * vl53l0x_ContinuousRanging_Example.c from the VL53L0X API.
@@ -13,7 +13,12 @@
 
 #include <Wire.h>       // For I2C communication
 #include "VL53L0X.h"    // For interfacing with the Time-of-Flight Distance sensor
+#include <TinyScreen.h> // For interfacing with the TinyScreen+
 #include <Wireling.h>   // For interfacing with Wirelings
+
+// TinyScreen+ variables
+TinyScreen display = TinyScreen(TinyScreenPlus);
+const int background = TS_8b_Black;
 
 VL53L0X distanceSensor; // Name of sensor 
 const int tofPort = 0;  // Port # of sensor (Found on Wireling Adapter Board)
@@ -39,6 +44,13 @@ void setup() {
   // with port #'s on the Wireling adapter board)
   Wireling.selectPort(tofPort);
 
+  // TinyScreen appearance variables are set
+  display.begin();
+  display.setFlip(true);
+  display.setBrightness(15); 
+  display.setFont(thinPixel7_10ptFontInfo);
+  display.fontColor(TS_8b_White, background);
+
   // Initialize the distance sensor and set a timeout
   distanceSensor.init();
   distanceSensor.setTimeout(500);
@@ -63,6 +75,25 @@ void loop() {
   averageRead /= (unsigned long)averageCount;
 
   // Print the average position to the TinyScreen and the Serial Monitor
+  printToScreen(averageRead);
   SerialMonitorInterface.print(averageRead);
   SerialMonitorInterface.println("mm");
+  
+}
+
+// Print averageRead to the TinyScreen
+void printToScreen(unsigned long averageRead){
+  // This will make the screen look a little unsteady but is needed in order
+  // to clear old values 
+  display.clearScreen();
+  
+  display.setCursor(0, 0); 
+  display.print("TOF Sensor Test"); 
+  
+  display.setCursor(0, 12);
+  display.print(averageRead);
+
+  if (distanceSensor.timeoutOccurred()) {
+    display.print("-");
+  }
 }
